@@ -1,5 +1,6 @@
 import 'dart:async';
-
+//import 'dart:isolate';
+//import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class ResponseTimePage extends StatefulWidget {
@@ -11,16 +12,20 @@ class _ResponseTimePageState extends State<ResponseTimePage> {
   Color _currentColor = Colors.blue;
   DateTime? _startTime;
   DateTime? _endTime;
+  Stopwatch timer = new Stopwatch();
+  
 
-  void _startTest() {
+  Future<void> _startTest() async  {
     setState(() {
       _currentColor = Colors.red;
       
       // Iniciar o temporizador para mudar a cor após 3 segundos
       Timer(const Duration(seconds: 3), () {
         setState(() {
-          _startTime = DateTime.now();
+          timer.reset();
           _currentColor = Colors.green;
+          timer.start();
+          _startTime = DateTime.now();
         });
       });
     });
@@ -28,6 +33,7 @@ class _ResponseTimePageState extends State<ResponseTimePage> {
 
   void _endTest() {
     setState(() {
+      timer.stop();
       _endTime = DateTime.now();
       _currentColor = Colors.blue;
     });
@@ -48,12 +54,13 @@ class _ResponseTimePageState extends State<ResponseTimePage> {
         title: const Text('Teste de Tempo de Resposta'),
       ),
       body: GestureDetector(
-        onTap: () {
+        onTap: ()async {
           if (_currentColor == Colors.green) {
             _endTest();
           }
           else if(_currentColor == Colors.blue){
             _startTest();
+          
           }
         },
         child: Container(
@@ -62,7 +69,7 @@ class _ResponseTimePageState extends State<ResponseTimePage> {
               child: _currentColor == Colors.blue
                   ? Container(   
                     child: (_startTime != null && _endTime != null)? 
-                    Text('Tempo de resposta: ${_calculateResponseTime()} ms',
+                    Text('Tempo de resposta: ${timer.elapsedMilliseconds} ms, ${_calculateResponseTime()}',
                      style: const TextStyle(color: Colors.white,
                      fontWeight: FontWeight.bold,
                       fontSize: 20.0,))

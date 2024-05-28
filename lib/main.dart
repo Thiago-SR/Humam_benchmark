@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'dart:isolate';
 import 'package:teste_de_desempenho/respose_time_page.dart';
 
 void main() {
